@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Alamofire
 
 class ProductsViewController: UIViewController {
 
@@ -51,14 +52,25 @@ extension ProductsViewController: UITableViewDataSource{
         
         
         //this should be in viewModel as due to lack of time usign here
-        let task = URLSession.shared.dataTask(with: URL(string: modelProducts.images![0])!) { Data, response, error in
-            if let data = Data, let image = UIImage(data: data){
+        AF.request(modelProducts.images![0]).response{response in
+            if let data = response.data, let image = UIImage(data: data){
                 DispatchQueue.main.async {
                     cell?.productImage.image = image
                 }
                 
             }
-        }.resume()
+        }
+        
+        
+        //using url session
+//        let task = URLSession.shared.dataTask(with: URL(string: modelProducts.images![0])!) { Data, response, error in
+//            if let data = Data, let image = UIImage(data: data){
+//                DispatchQueue.main.async {
+//                    cell?.productImage.image = image
+//                }
+//                
+//            }
+//        }.resume()
 //        cell?.productImage.image = UIImage()
         
         return cell!
