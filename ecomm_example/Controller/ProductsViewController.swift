@@ -12,7 +12,7 @@ class ProductsViewController: UIViewController {
 
     var viewModelUser = UserViewModel()
     
-//    var productData = [Products]()
+    var idxSelected = 0
 
     @IBOutlet var tblView: UITableView!
     
@@ -23,17 +23,14 @@ class ProductsViewController: UIViewController {
         viewModelUser.getData()
         
         tblView.dataSource = self
-        
-//
-//        tblView.reloadData()
+        tblView.delegate = self
     }
 
 }
 
 extension ProductsViewController: UITableViewDataSource{
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        print("viewController")
-//        print(viewModelUser.arrProducts.count)
         viewModelUser.arrProducts.count
     }
     
@@ -42,8 +39,6 @@ extension ProductsViewController: UITableViewDataSource{
         
         let modelProducts = viewModelUser.arrProducts[indexPath.row]
         
-//        print(modelProducts)
-//        print(modelProducts.title!)
         
         cell?.titleLabel.text = modelProducts.title
         cell?.priceLabel.text = "$\(modelProducts.price ?? 0)"
@@ -61,22 +56,30 @@ extension ProductsViewController: UITableViewDataSource{
             }
         }
         
-        
-        //using url session
-//        let task = URLSession.shared.dataTask(with: URL(string: modelProducts.images![0])!) { Data, response, error in
-//            if let data = Data, let image = UIImage(data: data){
-//                DispatchQueue.main.async {
-//                    cell?.productImage.image = image
-//                }
-//                
-//            }
-//        }.resume()
-//        cell?.productImage.image = UIImage()
-        
+    
         return cell!
     }
     
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        "Products List"
+    }
+    
+}
 
+extension ProductsViewController: UITableViewDelegate{
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        idxSelected = indexPath.row
+        self.performSegue(withIdentifier: "goToDetailProduct", sender: self)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let modelProducts = viewModelUser.arrProducts[idxSelected]
+        let destinationVC = segue.destination as! DetailViewController
+        
+        destinationVC.arrProducts = [modelProducts]
+    }
+    
     
     
 }
